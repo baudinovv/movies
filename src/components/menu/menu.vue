@@ -4,9 +4,11 @@ import { RouterLink } from 'vue-router';
 import homeIcon from  './homeIcon.vue'
 import moviesIcon from './moviesIcon.vue'
 import searchIcon from './searchIcon.vue'
+import TVIcon from './TVIcon.vue';
 
 export default{
   components: {
+    TVIcon,
     homeIcon,
     moviesIcon,
     searchIcon,
@@ -17,13 +19,16 @@ export default{
 <template>
   <aside class="bg-black w-[5%] h-lvh flex flex-col items-center justify-center fixed transition border-r-[1px] border-gray-800">
     <RouterLink to="/" class="mt-12 w-full">
-      <homeIcon class="size-[60%] text-[#ffffff] hover:text-[#2cff8b] transition" />
+      <homeIcon :type="($route.path === '/') ? 'full' : ''" :class="`size-[60%] ${$route.path === '/' ? 'text-[#2cff8b]' : 'hover:text-[#2cff8b] text-[#ffffff]'} transition`" />
     </RouterLink>
-    <RouterLink to="/test" class="mt-12 w-full">
-      <moviesIcon class="size-[60%] text-[#ffffff] hover:text-[#2cff8b] transition"/>
+    <RouterLink to="/movies" class="mt-12 w-full">
+      <moviesIcon :type="($route.path === '/movies') ? 'full' : ''" :class="`size-[60%] ${$route.path === '/movies' ? 'text-[#2cff8b]' : 'hover:text-[#2cff8b] text-[#ffffff]'} transition`" />
     </RouterLink>
-    <RouterLink to="/" class="mt-12 w-full">
-      <searchIcon class="size-[60%] text-[#ffffff] hover:text-[#2cff8b] transition"/>
+    <RouterLink to="/tv" class="mt-12 w-full">
+      <TVIcon :type="($route.path === '/tv') ? 'full' : ''" :class="`size-[60%] ${$route.path === '/tv' ? 'text-[#2cff8b]' : 'hover:text-[#2cff8b] text-[#ffffff]'} transition`" />
+    </RouterLink>
+    <RouterLink to="/search" class="mt-12 w-full">
+      <searchIcon :type="($route.path === '/search') ? 'full' : ''" :class="`size-[60%] ${$route.path === '/search' ? 'text-[#2cff8b]' : 'hover:text-[#2cff8b] text-[#ffffff]'} transition`" />
     </RouterLink>
   </aside>
 </template>

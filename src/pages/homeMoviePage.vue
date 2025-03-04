@@ -23,17 +23,18 @@ export default defineComponent({
   async created() {
     try {
       console.log("path here :",this.$route.path)
-
+      
       // Запрос данных через store
       await this.store.getPopularMovies();
-      await this.store.getTV();
+      await this.store.getTopRated('movie');
+      await this.store.getUpcoming('movie');
       await this.store.getDetails(this.store.$state.headlinerId, 'movie');
 
 
       // Установка состояния загрузки в false после получения данных
       this.loading = false;
     } catch (error) {
-      console.error("Ошибка при получении данных: ", error);
+      console.error("Ошибка при получении данных:", error);
     }
   }
 });
@@ -61,14 +62,23 @@ export default defineComponent({
     </cPopular>
     <div v-else>Популярные фильмы не найдены</div>
 
-    <!-- Популярные сериалы -->
-    <cPopular popular-title="Популярные сериалы" v-if="store.$state.popularTV">
-      <cCard v-for="item in store.$state.popularTV" 
-        @click="$router.push(`/tv/${item.id}/overview`)"
+    <cPopular popular-title="Фильмы с высокой оценкой" v-if="store.$state.topRatedMovies">
+      <cCard v-for="item in store.$state.topRatedMovies" 
+        @click="$router.push(`/movie/${item.id}/overview`)"
         :key="item.id"
         :card-rating="Number(item.vote_average?.toPrecision(2))"
         :card-image="item.poster_path"
-        :card-title="item.name" />
+        :card-title="item.title" />
+    </cPopular>
+    <div v-else>Популярные сериалы не найдены</div>
+
+    <cPopular popular-title="Скоро выйдут" v-if="store.$state.upcomingMovies">
+      <cCard v-for="item in store.$state.upcomingMovies" 
+        @click="$router.push(`/movie/${item.id}/overview`)"
+        :key="item.id"
+        :card-rating="Number(item.vote_average?.toPrecision(2))"
+        :card-image="item.poster_path"
+        :card-title="item.title" />
     </cPopular>
     <div v-else>Популярные сериалы не найдены</div>
   </div>

@@ -35,7 +35,7 @@ export default {
   
   async created() {
     try {
-      await this.store.getHeadliner(Number(this.$route.params.id), 'tv');
+      await this.store.getDetails(Number(this.$route.params.id), 'tv');
       if(Object.keys(this.store.$state.recommendations).length == 0 ||  Number(this.$route.params.id) !==  Number(this.store.credits.id)){
         await this.store.getRecommendations(Number(this.$route.params.id), 'tv')
       }
@@ -66,7 +66,7 @@ export default {
       <cCard v-for="item in store.$state.recommendations.results" 
         @click="$router.push(`/`).then(() => $router.push(`/tv/${item.id}/overview`))" 
         :card-rating="Number(item.vote_average.toPrecision(2))"
-        :card-image="item.poster_path?.toString()" 
+        :card-image="(item.poster_path) ? item.poster_path.toString() : '/assets/profile.png'"
         :card-title="item.title?.toString() || item.name?.toString()" />
     </cPopular>
   </div>

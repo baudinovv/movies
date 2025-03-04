@@ -15,7 +15,7 @@ export const useStoreDetails = defineStore(('details'), {
     return {
       details :  {} as MovieDetails | TVDetails,
       credits : {} as Credits,
-      language : "en-US" as String,
+      language : "ru-RU" as String,
       director: "" as String,
       prodCompanies: [] as String[],
       recommendations: {} as Recommendations,
@@ -23,7 +23,11 @@ export const useStoreDetails = defineStore(('details'), {
       apiKey: import.meta.env.VITE_APP_API_KEY,
       headliner: {} as Movie | TV,
       popularMovies: {} as Movie[],
+      topRatedMovies: {} as Movie[],
+      upcomingMovies: {} as Movie[],
       popularTV: {} as TV[],
+      topRatedTV: {} as TV[],
+      onAirTV: {} as TV[],
       images: {} as MovieImages,
       headlinerId: 0 as Number
     }
@@ -52,7 +56,7 @@ export const useStoreDetails = defineStore(('details'), {
     },
 
     async getTV() {
-      const url = `https://api.themoviedb.org/3/tv/on_the_air?language=${this.language}&page=1`;
+      const url = `https://api.themoviedb.org/3/tv/popular?language=${this.language}&page=1`;
       const options = {
         method: 'GET',
         headers: {
@@ -65,11 +69,12 @@ export const useStoreDetails = defineStore(('details'), {
       let result = responseTV.json();
       result.then((res: any) => {
         this.popularTV = res.results;
+        this.headlinerId = res.results[0].id;
         console.log("popularTV: ", res);
       }).catch((err: Error) => console.error(err));
     },
 
-    async getHeadliner(id: Number | string, type: string) {
+    async getDetails(id: Number | string, type: string) {
       const url =
       `https://api.themoviedb.org/3/${type}/${id}?language=${this.language}`;
       const options = {
@@ -172,6 +177,57 @@ export const useStoreDetails = defineStore(('details'), {
         this.images = res;
         console.log("images: ",res);
       }).catch((err: Error) => console.error(err));
-    }
+    },
+    async getTopRated(type: string) {
+      const url = `https://api.themoviedb.org/3/${type}/top_rated?language=${this.language}&page=1`;
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      };
+
+      let response = await fetch(url, options);
+      let result = response.json();
+      result.then((res: any) => {
+        (type === 'tv') ? this.topRatedTV = res.results : this.topRatedMovies = res.results; 
+        console.log(`topRated${type.toUpperCase()} :`, this.topRatedMovies);
+      }).catch((err: Error) => console.error(err));
+    },
+    async getUpcoming(type: string) {
+      const url = `https://api.themoviedb.org/3/${type}/upcoming?language=${this.language}&page=1`;
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      };
+
+      let response = await fetch(url, options);
+      let result = response.json();
+      result.then((res: any) => {
+        this.upcomingMovies = res.results;
+        console.log("upcomingMovies :", this.upcomingMovies);
+      }).catch((err: Error) => console.error(err));
+    },
+    async getOnAir() {
+      const url = `https://api.themoviedb.org/3/tv/on_the_air?language=${this.language}&page=1`;
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      };
+
+      let responseTV = await fetch(url, options);
+      let result = responseTV.json();
+      result.then((res: any) => {
+        this.onAirTV = res.results;
+        console.log("on air TV: ", res);
+      }).catch((err: Error) => console.error(err));
+    },
   }
 });

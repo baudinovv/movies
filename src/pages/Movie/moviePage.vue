@@ -24,7 +24,7 @@ export default {
       headliner: null as MovieDetails | null,
       apiKey: import.meta.env.VITE_APP_API_KEY,
       store: useStoreDetails(),
-      loading: true
+      loading: true,
     };
   },
   methods: {
@@ -36,7 +36,7 @@ export default {
   
   async created() {
     try {
-      await this.store.getHeadliner(Number(this.$route.params.id), 'movie');
+      await this.store.getDetails(Number(this.$route.params.id), 'movie');
       if(Object.keys(this.store.$state.recommendations).length == 0 ||  Number(this.$route.params.id) !==  Number(this.store.credits.id)){
         await this.store.getRecommendations(Number(this.$route.params.id), 'movie')
       }
@@ -67,7 +67,7 @@ export default {
       <cCard v-for="item in store.$state.recommendations.results" 
         @click="$router.push(`/`).then(() => $router.push(`/movie/${item.id}/overview`))" 
         :card-rating="Number(item.vote_average.toPrecision(2))"
-        :card-image="item.poster_path?.toString()" 
+        :card-image="(!(item.poster_path === null)) ? item.poster_path.toString() : '/assets/profile.png'" 
         :card-title="item.title?.toString()" />
     </cPopular>
   </div>

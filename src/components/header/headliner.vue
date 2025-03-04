@@ -35,13 +35,5 @@ export default{
       </ol>
       <div class="">{{ headliner?.overview }}</div>
     </div>
-    <!-- 
-    :header-title="store.$state.headliner?.title"
-    :header-reviews="(store.$state.headliner?.vote_count > 1000) ? `${store.$state.headliner?.vote_count / 1000}`.substring(0, 3) + 'K рецензий' : `${store.$state.headliner?.vote_count}`"
-    :header-year="store.$state.headliner?.release_date?.substring(0, 4)"
-    header-duration="2ч 8м"
-    :header-img="store.$state.headliner?.backdrop_path"
-    :header-desc="store.$state.headliner?.overview"> 
-    -->
   </header>
 </template>

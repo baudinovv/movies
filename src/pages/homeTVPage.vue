@@ -23,17 +23,18 @@ export default defineComponent({
   async created() {
     try {
       console.log("path here :",this.$route.path)
-
+      
       // Запрос данных через store
-      await this.store.getPopularMovies();
       await this.store.getTV();
-      await this.store.getDetails(this.store.$state.headlinerId, 'movie');
+      await this.store.getOnAir();
+      await this.store.getTopRated('tv');
+      await this.store.getDetails(this.store.$state.headlinerId, 'tv');
 
 
       // Установка состояния загрузки в false после получения данных
       this.loading = false;
     } catch (error) {
-      console.error("Ошибка при получении данных: ", error);
+      console.error("Ошибка при получении данных:", error);
     }
   }
 });
@@ -43,25 +44,13 @@ export default defineComponent({
   <div v-if="loading">Загрузка...</div>
   <div v-else>
     <cHeader v-if="store.$state.details"
-      type="movie" 
+      type="tv" 
       :headliner="store.$state.details"  
     >
 
       <cRating :star-rating="Number(store.$state.headliner.vote_average?.toPrecision(2))" />
     </cHeader>
 
-    <!-- Популярные фильмы -->
-    <cPopular popular-title="Популярные фильмы" v-if="store.$state.popularMovies">
-      <cCard v-for="item in store.$state.popularMovies" 
-        @click="$router.push(`/movie/${item.id}/overview`)"
-        :key="item.id"
-        :card-rating="Number(item.vote_average?.toPrecision(2))"
-        :card-image="item.poster_path"
-        :card-title="item.title" />
-    </cPopular>
-    <div v-else>Популярные фильмы не найдены</div>
-
-    <!-- Популярные сериалы -->
     <cPopular popular-title="Популярные сериалы" v-if="store.$state.popularTV">
       <cCard v-for="item in store.$state.popularTV" 
         @click="$router.push(`/tv/${item.id}/overview`)"
@@ -71,5 +60,26 @@ export default defineComponent({
         :card-title="item.name" />
     </cPopular>
     <div v-else>Популярные сериалы не найдены</div>
+
+    <cPopular popular-title="С высокой оценкой" v-if="store.$state.topRatedTV">
+      <cCard v-for="item in store.$state.topRatedTV" 
+        @click="$router.push(`/tv/${item.id}/overview`)"
+        :key="item.id"
+        :card-rating="Number(item.vote_average?.toPrecision(2))"
+        :card-image="item.poster_path"
+        :card-title="item.name" />
+    </cPopular>
+    <div v-else>Популярные сериалы не найдены</div>
+    
+    <cPopular popular-title="Транслируется сейчас" v-if="store.$state.onAirTV">
+      <cCard v-for="item in store.$state.onAirTV" 
+        @click="$router.push(`/tv/${item.id}/overview`)"
+        :key="item.id"
+        :card-rating="Number(item.vote_average?.toPrecision(2))"
+        :card-image="item.poster_path"
+        :card-title="item.name" />
+    </cPopular>
+    <div v-else>Популярные сериалы не найдены</div>
+
   </div>
 </template>
