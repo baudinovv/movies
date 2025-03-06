@@ -1,6 +1,5 @@
 <script lang="ts">
 
-import { RouterLink } from 'vue-router';
 import homeIcon from  './homeIcon.vue'
 import moviesIcon from './moviesIcon.vue'
 import searchIcon from './searchIcon.vue'

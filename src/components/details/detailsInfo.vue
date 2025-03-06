@@ -1,7 +1,5 @@
 <script lang="ts">
 
-import { useStoreDetails } from '../../store/details';
-
 
 import cPopular from '../popular/popularSection.vue';
 import cCard from '../popular/popularCard.vue'
