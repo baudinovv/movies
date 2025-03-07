@@ -43,6 +43,7 @@ export default {
         <div class="w-full max-w-[30%] h-full cursor-pointer pt-4 ml-6 "
           v-for="(item,idx) in store.$state.images.backdrops"
           @click="showModal = true;imageIndex = idx;"
+          loading="lazy"
         >
           <div 
             :style="`background-image: url('https://movies-proxy.vercel.app/ipx/f_webp&s_400x600/tmdb/${item.file_path}'); background-size: 100%; background-repeat: no-repeat; background-position: center;`"
@@ -64,6 +65,6 @@ export default {
       @keyup.right="nextImage" 
       :src="imageSrc + store.$state.images.backdrops[imageIndex].file_path" alt=""
     >
-    <div class="fixed bottom-5 left-5 z-50"><span class="bold"> {{ imageIndex + 1 }} </span> / {{ store.$state.images.backdrops.length }}</div>
+    <div class="fixed bottom-5 left-20 z-50"><span class="bold"> {{ imageIndex + 1 }} </span> / {{ store.$state.images.backdrops.length }}</div>
   </cModal> 
 </template>

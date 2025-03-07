@@ -4,12 +4,14 @@ import { defineComponent } from "vue";
 
 import cMenu from './components/menu/menu.vue';
 import cMain from './components/main/main.vue';
+import cFooter from './components/footer/footer.vue'
 
 export default defineComponent({
   name: "App",
   components: {
     cMenu,
-    cMain
+    cMain,
+    cFooter
   }
 });
 </script>
@@ -18,5 +20,6 @@ export default defineComponent({
   <cMenu />
   <cMain >
     <RouterView/>
+    <cFooter />
   </cMain>
 </template>

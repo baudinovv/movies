@@ -5,7 +5,7 @@ import cHeader from "../components/header/headliner.vue";
 import cRating from "../components/header/rating.vue";
 import cPopular from "../components/popular/popularSection.vue";
 import cCard from "../components/popular/popularCard.vue";
-
+import cLoading from "../components/loading/loading.vue";
 export default defineComponent({
   name: "App",
   components: {
@@ -13,6 +13,7 @@ export default defineComponent({
     cRating,
     cPopular,
     cCard,
+    cLoading
   },
   data() {
     return {
@@ -40,7 +41,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div v-if="loading">Загрузка...</div>
+  <cLoading v-if="loading" />
   <div v-else>
     <cHeader v-if="store.$state.details"
       type="movie" 

@@ -15,7 +15,7 @@ import HomeTVPage from '../pages/homeTVPage.vue';
 
 const routes = [
   { path: '/', component: home },
-  { path: '/movies', component: homeMoviePage },
+  { path: '/movie', component: homeMoviePage },
   { path: '/tv', component: HomeTVPage },
   { path: '/movie/:id/', component: movie, children: [
     { path: 'overview', component: detailsOverviewPage },
@@ -30,7 +30,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/movies/'),
   routes,
 })
 
