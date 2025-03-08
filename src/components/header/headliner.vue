@@ -1,7 +1,6 @@
 <script lang="ts">
 import MovieDetails from '../../interfaces/Movie/MovieDetails';
 import { TVDetails } from '../../interfaces/TV/TVDetails';
-import { Transition } from 'vue';
 
 export default{
   name: "c-header",
