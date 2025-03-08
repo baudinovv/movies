@@ -63,8 +63,8 @@ export default {
       tabindex="0" 
       @keyup.left="prevImage"
       @keyup.right="nextImage" 
-      :src="store.$state.images.backdrops[imageIndex] + imageSrc + store.$state.images.backdrops[imageIndex].file_path" alt=""
+      :src="imageSrc + store.$state.images.backdrops[imageIndex].file_path" alt=""
     >
-    <div class="fixed bottom-5 left-20 z-50"><span class="bold"> {{ imageIndex }} </span> / {{ store.$state.images.backdrops.length }}</div>
+    <div class="fixed bottom-5 left-20 z-50"><span class="bold"> {{ imageIndex + 1}} </span> / {{ store.$state.images.backdrops.length }}</div>
   </cModal> 
 </template>
