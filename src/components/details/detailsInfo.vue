@@ -96,7 +96,7 @@ export default {
   <cPopular popular-title="Актерский состав">
     <cCard v-for="item in credits.cast" 
       :card-rating="0"
-      :card-image="(item.profile_path) ? item.profile_path.toString() : '../../../assets/profile.png'" 
+      :card-image="(item.profile_path) ? item.profile_path.toString() : '/movies/assets/profile.png'" 
       :card-title="item.name?.toString()" />
   </cPopular>
 </template>

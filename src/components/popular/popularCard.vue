@@ -21,7 +21,12 @@ export default{
 </script>
 <template>
   <div class="transition h-full max-w-60 cursor-pointer hover:scale-105">
-    <img :src="(cardImage?.charAt(0) === '.') ? cardImage : moviesLink + cardImage" alt="" class="border-4 border-neutral-800 min-h-[341px]  min-w-[230px]">
+    <img 
+      :src="(cardImage === '/movies/assets/profile.png') ? cardImage : moviesLink + cardImage" alt="" 
+      :srcset="(cardImage === '/movies/assets/profile.png') ? cardImage : `${moviesLink + cardImage} 1x, https://image.tmdb.org/t/p/original${cardImage} 2x`"
+      class="border-4 border-neutral-800 min-h-[341px]  min-w-[230px]"
+      
+    >
     <div class="mt-2 text-xl"> {{ cardTitle }}</div>
     <cRating v-if="cardRating" :star-rating="cardRating" class="w-[80px] text-sm items-center" />
   </div>
