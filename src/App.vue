@@ -17,9 +17,26 @@ export default defineComponent({
 </script>
 
 <template>
-  <cMenu />
+  <Transition>
+    <cMenu />
+  </Transition> 
   <cMain >
     <RouterView/>
     <cFooter />
   </cMain>
 </template>
+
+
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: all 1s ease;
+  opacity: 1;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+</style>
