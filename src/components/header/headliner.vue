@@ -22,7 +22,7 @@ export default{
 
 </script>
 <template>
-  <header class="w-full relative overflow-hidden h-[75vh]  lg:h-[40vw] flex flex-col justify-center">
+  <header class="w-full relative overflow-hidden h-[70vw]  lg:h-[40vw] flex flex-col justify-center">
     <img class="absolute top-0 right-0 lg:h-full w-full lg:w-fit" :src="moviesLink + headliner?.backdrop_path"  :srcset="`https://movies-proxy.vercel.app/ipx/f_webp&amp;s_1220x659/tmdb${headliner?.backdrop_path} 1x, https://movies-proxy.vercel.app/ipx/f_webp&amp;s_2440x1318/tmdb${headliner?.backdrop_path} 2x`">
     <div class="absolute w-full h-full bg-gradient-to-t lg:bg-gradient-to-r from-black via-black via-20% top-0 left-0 "></div>
     <Transition appear>
