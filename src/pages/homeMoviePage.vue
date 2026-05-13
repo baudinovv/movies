@@ -1,87 +1,69 @@
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useStoreDetails } from "../store/details.ts";
-import cHeader from "../components/header/headliner.vue";
-import cRating from "../components/header/rating.vue";
-import cPopular from "../components/popular/popularSection.vue";
-import cCard from "../components/popular/popularCard.vue";
-import cLoading from "../components/loading/loading.vue";
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStoreDetails } from '../store/details';
+import Headliner from '../components/header/headliner.vue';
+import Rating from '../components/header/rating.vue';
+import PopularSection from '../components/popular/popularSection.vue';
+import PopularCard from '../components/popular/popularCard.vue';
+import AppLoading from '../components/loading/loading.vue';
 
-export default defineComponent({
-  name: "App",
-  components: {
-    cHeader,
-    cRating,
-    cPopular,
-    cCard,
-    cLoading
-  },
-  data() {
-    return {
-      loading: true,
-      store: useStoreDetails()
-    };
-  },
-  async created() {
-    try {
-      console.log("path here :",this.$route.path)
-      
-      // Запрос данных через store
-      await this.store.getPopularMovies();
-      await this.store.getTopRated('movie');
-      await this.store.getUpcoming('movie');
-      await this.store.getDetails(this.store.$state.headlinerId, 'movie');
+const store = useStoreDetails();
+const router = useRouter();
+const loading = ref(true);
 
-
-      // Установка состояния загрузки в false после получения данных
-      this.loading = false;
-    } catch (error) {
-      console.error("Ошибка при получении данных:", error);
-    }
+onMounted(async () => {
+  try {
+    await store.getPopularMovies();
+    await store.getTopRated('movie');
+    await store.getUpcoming('movie');
+    await store.getDetails(store.headlinerId, 'movie');
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
   }
 });
 </script>
 
 <template>
-  <cLoading v-if="loading" />
+  <AppLoading v-if="loading" />
   <div v-else>
-    <cHeader v-if="store.$state.details"
-      type="movie" 
-      :headliner="store.$state.details"  
-    >
+    <Headliner v-if="store.details" type="movie" :headliner="store.details">
+      <Rating :star-rating="Number(store.headliner.vote_average?.toPrecision(2))" />
+    </Headliner>
 
-      <cRating :star-rating="Number(store.$state.headliner.vote_average?.toPrecision(2))" />
-    </cHeader>
-
-    <!-- Популярные фильмы -->
-    <cPopular popular-title="Популярные фильмы" v-if="store.$state.popularMovies">
-      <cCard v-for="item in store.$state.popularMovies" 
-        @click="$router.push(`/movie/${item.id}/overview`)"
+    <PopularSection popular-title="Популярные фильмы" v-if="store.popularMovies.length">
+      <PopularCard
+        v-for="item in store.popularMovies"
         :key="item.id"
         :card-rating="Number(item.vote_average?.toPrecision(2))"
         :card-image="item.poster_path"
-        :card-title="item.title" />
-    </cPopular>
-    <div v-else>Популярные фильмы не найдены</div>
+        :card-title="item.title"
+        @click="router.push(`/movie/${item.id}/overview`)"
+      />
+    </PopularSection>
 
-    <cPopular popular-title="Фильмы с высокой оценкой" v-if="store.$state.topRatedMovies">
-      <cCard v-for="item in store.$state.topRatedMovies" 
-        @click="$router.push(`/movie/${item.id}/overview`)"
+    <PopularSection popular-title="Фильмы с высокой оценкой" v-if="store.topRatedMovies.length">
+      <PopularCard
+        v-for="item in store.topRatedMovies"
         :key="item.id"
         :card-rating="Number(item.vote_average?.toPrecision(2))"
         :card-image="item.poster_path"
-        :card-title="item.title" />
-    </cPopular>
-    <div v-else>Популярные сериалы не найдены</div>
+        :card-title="item.title"
+        @click="router.push(`/movie/${item.id}/overview`)"
+      />
+    </PopularSection>
 
-    <cPopular popular-title="Скоро выйдут" v-if="store.$state.upcomingMovies">
-      <cCard v-for="item in store.$state.upcomingMovies" 
-        @click="$router.push(`/movie/${item.id}/overview`)"
+    <PopularSection popular-title="Скоро выйдут" v-if="store.upcomingMovies.length">
+      <PopularCard
+        v-for="item in store.upcomingMovies"
         :key="item.id"
         :card-rating="Number(item.vote_average?.toPrecision(2))"
         :card-image="item.poster_path"
-        :card-title="item.title" />
-    </cPopular>
-    <div v-else>Популярные сериалы не найдены</div>
+        :card-title="item.title"
+        @click="router.push(`/movie/${item.id}/overview`)"
+      />
+    </PopularSection>
   </div>
 </template>

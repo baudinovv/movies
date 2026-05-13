@@ -1,51 +1,27 @@
-<script lang="ts">
-import headerStars from './star.vue'
-export default{
-  name: "rating",
-  props: {
-    starRating: {
-      type: Number,
-      default: 5
-    }
-  },
-  components:{
-    headerStars
-  },
+<script setup lang="ts">
+import { computed } from 'vue';
+import StarIcon from './star.vue';
 
-  data(){
-    return {
-      starsArr: [] as string[]
-    };
-  },
+const props = defineProps<{ starRating: number }>();
 
-  methods : {
-    getStars(){
-      if(this.starRating){
-        for(let i = 0; i < Number((this.starRating/2).toPrecision(2)[0]); i++){
-          this.starsArr.push('full');
-        }
-        (this.starRating/2) ? (Number((this.starRating / 2).toPrecision(2)) * 10 % 10 != 0) ? this.starsArr.push('half') : 0 : 0;
-        for(let i = this.starsArr.length; i < 5; i++){
-          this.starsArr.push('empty');
-        }
-      }
-    } 
-  },
-  mounted(){
-    this.getStars();
-  }
-}
+const stars = computed(() => {
+  const result: string[] = [];
+  const half = props.starRating / 2;
+  const full = Math.floor(Number(half.toPrecision(2)[0]));
+
+  for (let i = 0; i < full; i++) result.push('full');
+  if (Number(half.toPrecision(2)) * 10 % 10 !== 0) result.push('half');
+  while (result.length < 5) result.push('empty');
+
+  return result;
+});
 </script>
+
 <template>
-  <div class="flex text-gray-400">
-    <div class="flex mr-2 w-full">
-      <headerStars
-        v-for="(item, index) in starsArr" 
-        color="#2cff8b"
-        :star="item"
-        :key="index" 
-      />
+  <div class="flex items-center text-gray-400 gap-1">
+    <div class="flex">
+      <StarIcon v-for="(star, i) in stars" :key="i" :star="star" color="#2cff8b" />
     </div>
-    <div class="">{{ starRating / 2}}</div>
+    <div class="text-sm">{{ (starRating / 2).toFixed(1) }}</div>
   </div>
 </template>

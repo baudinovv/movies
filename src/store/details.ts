@@ -1,233 +1,107 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia';
+import type MovieDetails from '../interfaces/Movie/MovieDetails';
+import type MovieVideo from '../interfaces/Movie/MovieVideo';
+import type Credits from '../interfaces/Movie/Credits';
+import type { Recommendations } from '../interfaces/Movie/Recommendations';
+import type Movie from '../interfaces/Movie/Movie';
+import type TV from '../interfaces/TV/TV';
+import type { MovieImages } from '../interfaces/Movie/MovieImages';
+import type { TVDetails } from '../interfaces/TV/TVDetails';
+import type { TVImages } from '../interfaces/TV/TVImages';
 
-import MovieDetails from '../interfaces/Movie/MovieDetails';
-import MovieVideo from "../interfaces/Movie/MovieVideo";
-import Credits from "../interfaces/Movie/Credits";
-import { Recommendations } from "../interfaces/Movie/Recommendations";
-import Movie from "../interfaces/Movie/Movie";
-import TV from "../interfaces/TV/TV";
-import { MovieImages } from "../interfaces/Movie/MovieImages";
-import { TVDetails } from "../interfaces/TV/TVDetails";
-import { TVImages } from "../interfaces/TV/TVImages";
+const API_BASE = 'https://api.themoviedb.org/3';
+const LANGUAGE = 'ru-RU';
+const API_KEY = import.meta.env.VITE_APP_API_KEY as string;
 
-export const useStoreDetails = defineStore(('details'), {
-  state: () => {
-    return {
-      details :  {} as MovieDetails | TVDetails,
-      credits : {} as Credits,
-      language : "ru-RU" as String,
-      director: "" as String,
-      prodCompanies: [] as String[],
-      recommendations: {} as Recommendations,
-      videos: {} as MovieVideo,
-      apiKey: import.meta.env.VITE_APP_API_KEY,
-      headliner: {} as Movie | TV,
-      popularMovies: {} as Movie[],
-      topRatedMovies: {} as Movie[],
-      upcomingMovies: {} as Movie[],
-      popularTV: {} as TV[],
-      topRatedTV: {} as TV[],
-      onAirTV: {} as TV[],
-      images: {} as MovieImages,
-      headlinerId: 0 as Number
-    }
-  },
-  actions : {
-    async getPopularMovies() {
-      const url =
-        `https://api.themoviedb.org/3/movie/now_playing?language=${this.language}&page=1`;
-      const options = {
-        method: "GET",
+export const useStoreDetails = defineStore('details', {
+  state: () => ({
+    details: {} as MovieDetails | TVDetails,
+    credits: {} as Credits,
+    director: '' as string,
+    prodCompanies: [] as string[],
+    recommendations: {} as Recommendations,
+    videos: {} as MovieVideo,
+    headliner: {} as Movie | TV,
+    popularMovies: [] as Movie[],
+    topRatedMovies: [] as Movie[],
+    upcomingMovies: [] as Movie[],
+    popularTV: [] as TV[],
+    topRatedTV: [] as TV[],
+    onAirTV: [] as TV[],
+    images: {} as MovieImages | TVImages,
+    headlinerId: 0 as number,
+  }),
+
+  actions: {
+    async _fetch<T>(path: string): Promise<T> {
+      const res = await fetch(`${API_BASE}${path}`, {
         headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer " + this.apiKey,
+          accept: 'application/json',
+          Authorization: `Bearer ${API_KEY}`,
         },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: any) => {
-        this.headliner = res.results[0];
-        this.popularMovies = res.results;
-        this.headlinerId = res.results[0].id
-        console.log("headliner on homepage: ", this.headliner)
-        console.log("popularMovies: ", this.popularMovies);
-      }).catch((err: Error) => console.error(err));
+      });
+      if (!res.ok) throw new Error(`API ${res.status}: ${path}`);
+      return res.json();
+    },
+
+    async getPopularMovies() {
+      const data = await this._fetch<{ results: Movie[] }>(`/movie/now_playing?language=${LANGUAGE}&page=1`);
+      this.popularMovies = data.results;
+      this.headliner = data.results[0];
+      this.headlinerId = data.results[0].id;
     },
 
     async getTV() {
-      const url = `https://api.themoviedb.org/3/tv/popular?language=${this.language}&page=1`;
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${this.apiKey}`
-        }
-      };
-
-      let responseTV = await fetch(url, options);
-      let result = responseTV.json();
-      result.then((res: any) => {
-        this.popularTV = res.results;
-        this.headlinerId = res.results[0].id;
-        console.log("popularTV: ", res);
-      }).catch((err: Error) => console.error(err));
+      const data = await this._fetch<{ results: TV[] }>(`/tv/popular?language=${LANGUAGE}&page=1`);
+      this.popularTV = data.results;
+      this.headlinerId = data.results[0].id;
     },
 
-    async getDetails(id: Number | string, type: string) {
-      const url =
-      `https://api.themoviedb.org/3/${type}/${id}?language=${this.language}`;
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-          "Bearer " + this.apiKey,
-        },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: any) => {
-        console.log("details :", res); //debug
-        this.details = res; // set into pinia's store
-      }).catch((err: Error) => console.error(err));
-    },
-    async getRecommendations(id : Number | string, type: string) {
-      const url =
-      `https://api.themoviedb.org/3/${type}/${id}/recommendations?language=${this.language}&page=1`;
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-          "Bearer " + this.apiKey,
-        },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: Recommendations) => {
-        this.recommendations = res;
-        console.log("recom: ", res);
-      }).catch((err: Error) => console.error(err));
-    },
-    async getCredits(id : Number | string, type: string) {
-      const url =
-      `https://api.themoviedb.org/3/${type}/${id}/credits?language=${this.language}`;
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-          "Bearer " + this.apiKey,
-        },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: Credits) => {
-        console.log("credits: ", res);
-        this.credits = res;
-        for(let item of res.crew){
-          if(item.job == "Director"){
-            this.director = item.name;
-          }
-        }
-      }).catch((err: Error) => console.error(err));
+    async getDetails(id: number | string, type: string) {
+      this.details = await this._fetch<MovieDetails | TVDetails>(`/${type}/${id}?language=${LANGUAGE}`);
     },
 
-    getProdCompanies(){
-      if(this.details.production_companies){
-        this.prodCompanies = [];
-        for(let item of this.details.production_companies){
-          this.prodCompanies.push(item.name);
-        }
-      } 
+    async getRecommendations(id: number | string, type: string) {
+      this.recommendations = await this._fetch<Recommendations>(
+        `/${type}/${id}/recommendations?language=${LANGUAGE}&page=1`,
+      );
     },
-    async getVideos(id : Number, type: string) {
-      const url =
-      `https://api.themoviedb.org/3/${type}/${id}/videos?language=${this.language}`;
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-          "Bearer " + this.apiKey,
-        },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: MovieVideo) => {
-        this.videos = res;
-        console.log("video: ",res);
-      }).catch((err: Error) => console.error(err));
+
+    async getCredits(id: number | string, type: string) {
+      const data = await this._fetch<Credits>(`/${type}/${id}/credits?language=${LANGUAGE}`);
+      this.credits = data;
+      this.director = data.crew.find(c => c.job === 'Director')?.name ?? '';
     },
-    async getImages(id: Number, type : string){
-      const url =
-      `https://api.themoviedb.org/3/${type}/${id}/images?language${this.language.substring(0, 2)}`;
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-          "Bearer " + this.apiKey,
-        },
-      };
-      let responseMovie = await fetch(url, options);
-      let result = responseMovie.json();
-      result.then((res: MovieImages | TVImages) => {
-        this.images = res;
-        console.log("images: ",res);
-      }).catch((err: Error) => console.error(err));
+
+    getProdCompanies() {
+      if (this.details.production_companies) {
+        this.prodCompanies = this.details.production_companies.map(c => c.name);
+      }
     },
+
+    async getVideos(id: number, type: string) {
+      this.videos = await this._fetch<MovieVideo>(`/${type}/${id}/videos?language=${LANGUAGE}`);
+    },
+
+    async getImages(id: number, type: string) {
+      const lang = LANGUAGE.substring(0, 2);
+      this.images = await this._fetch<MovieImages | TVImages>(`/${type}/${id}/images?language=${lang}`);
+    },
+
     async getTopRated(type: string) {
-      const url = `https://api.themoviedb.org/3/${type}/top_rated?language=${this.language}&page=1`;
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${this.apiKey}`
-        }
-      };
-
-      let response = await fetch(url, options);
-      let result = response.json();
-      result.then((res: any) => {
-        (type === 'tv') ? this.topRatedTV = res.results : this.topRatedMovies = res.results; 
-        console.log(`topRated${type.toUpperCase()} :`, this.topRatedMovies);
-      }).catch((err: Error) => console.error(err));
+      const data = await this._fetch<{ results: any[] }>(`/${type}/top_rated?language=${LANGUAGE}&page=1`);
+      if (type === 'tv') this.topRatedTV = data.results;
+      else this.topRatedMovies = data.results;
     },
+
     async getUpcoming(type: string) {
-      const url = `https://api.themoviedb.org/3/${type}/upcoming?language=${this.language}&page=1`;
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${this.apiKey}`
-        }
-      };
-
-      let response = await fetch(url, options);
-      let result = response.json();
-      result.then((res: any) => {
-        this.upcomingMovies = res.results;
-        console.log("upcomingMovies :", this.upcomingMovies);
-      }).catch((err: Error) => console.error(err));
+      const data = await this._fetch<{ results: Movie[] }>(`/${type}/upcoming?language=${LANGUAGE}&page=1`);
+      this.upcomingMovies = data.results;
     },
+
     async getOnAir() {
-      const url = `https://api.themoviedb.org/3/tv/on_the_air?language=${this.language}&page=1`;
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: `Bearer ${this.apiKey}`
-        }
-      };
-
-      let responseTV = await fetch(url, options);
-      let result = responseTV.json();
-      result.then((res: any) => {
-        this.onAirTV = res.results;
-        console.log("on air TV: ", res);
-      }).catch((err: Error) => console.error(err));
+      const data = await this._fetch<{ results: TV[] }>(`/tv/on_the_air?language=${LANGUAGE}&page=1`);
+      this.onAirTV = data.results;
     },
-  }
+  },
 });

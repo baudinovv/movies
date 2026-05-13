@@ -1,9 +1,9 @@
-import Movie from './Movie';
-import TV from '../TV/TV';
+import type Movie from './Movie';
+import type TV from '../TV/TV';
 
 export interface Recommendations {
-  page: Number;
-  results: Movie[] & TV[];
-  total_pages: Number;
-  total_results: Number;
+  page: number;
+  results: (Movie | TV)[];
+  total_pages: number;
+  total_results: number;
 }

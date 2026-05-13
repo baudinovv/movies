@@ -1,15 +1,15 @@
 export default interface MovieVideo {
-  id: Number,
+  id: number;
   results: {
-    iso_639_1: String;
-    iso_3166_1: String;
-    name: String;
-    key: String;
-    site: String;
-    size: Number;
-    type: String;
-    official: Boolean;
-    published_at: String;
-    id: String;
-  }[]
+    iso_639_1: string;
+    iso_3166_1: string;
+    name: string;
+    key: string;
+    site: string;
+    size: number;
+    type: string;
+    official: boolean;
+    published_at: string;
+    id: string;
+  }[];
 }

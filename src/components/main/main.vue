@@ -1,16 +1,8 @@
-<script lang="ts">
-
-export default{
-
-}
-
+<script setup lang="ts">
 </script>
 
 <template>
-  <div class="bg-neutral-900 w-full lg:w-[95%] justify-self-end ml-12 text-gray-300 lg:h-full">
-    <slot></slot>
+  <div class="bg-neutral-900 w-full lg:w-[95%] lg:ml-[5%] pb-16 lg:pb-0 text-gray-300 min-h-screen">
+    <slot />
   </div>
 </template>
-
-<style>
-</style>

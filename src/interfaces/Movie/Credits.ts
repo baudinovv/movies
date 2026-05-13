@@ -1,32 +1,32 @@
 export default interface Credits {
-  id: Number;
+  id: number;
   cast: {
-    adult: Boolean;
-    gender: Number;
-    id: Number;
-    known_for_department: String;
-    name: String;
-    original_name: String;
-    popularity: Number;
-    profile_path: String;
-    cast_id: Number;
-    character: String;
-    credit_id: String;
-    order: Number;
-  }[],
+    adult: boolean;
+    gender: number;
+    id: number;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string | null;
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    order: number;
+  }[];
   crew: {
-    adult: Boolean;
-    gender: Number;
-    id: Number;
-    job: String;
-    known_for_department: String;
-    name: String;
-    original_name: String;
-    popularity: Number;
-    profile_path: String;
-    cast_id: Number;
-    character: String;
-    credit_id: String;
-    order: Number;
-  }[]
-};
+    adult: boolean;
+    gender: number;
+    id: number;
+    job: string;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string | null;
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    order: number;
+  }[];
+}

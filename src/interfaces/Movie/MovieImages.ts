@@ -1,30 +1,30 @@
 export interface MovieImages {
+  id: number;
   backdrops: {
-    aspect_ratio: Number;
-    height: Number;
-    iso_639_1: String;
-    file_path: String;
-    vote_average: Number;
-    vote_count: Number;
-    width: Number;
+    aspect_ratio: number;
+    height: number;
+    iso_639_1: string | null;
+    file_path: string;
+    vote_average: number;
+    vote_count: number;
+    width: number;
   }[];
-  id: Number;
   logos: {
-    aspect_ratio: Number;
-    height: Number;
-    iso_639_1: String;
-    file_path: String;
-    vote_average: Number;
-    vote_count: Number;
-    width: Number;
+    aspect_ratio: number;
+    height: number;
+    iso_639_1: string | null;
+    file_path: string;
+    vote_average: number;
+    vote_count: number;
+    width: number;
   }[];
   posters: {
-    aspect_ratio: Number;
-    height: Number;
-    iso_639_1: String;
-    file_path: String;
-    vote_average: Number;
-    vote_count: Number;
-    width: Number;
+    aspect_ratio: number;
+    height: number;
+    iso_639_1: string | null;
+    file_path: string;
+    vote_average: number;
+    vote_count: number;
+    width: number;
   }[];
 }

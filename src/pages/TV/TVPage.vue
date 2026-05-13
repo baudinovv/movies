@@ -1,75 +1,53 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStoreDetails } from '../../store/details';
+import Headliner from '../../components/header/headliner.vue';
+import Rating from '../../components/header/rating.vue';
+import DetailsMenu from '../../components/details/detailsMenu.vue';
+import PopularSection from '../../components/popular/popularSection.vue';
+import PopularCard from '../../components/popular/popularCard.vue';
+import AppLoading from '../../components/loading/loading.vue';
 
-import cHeader from '../../components/header/headliner.vue';
-import cRating from '../../components/header/rating.vue'
-import cDetailsMenu from '../../components/details/detailsMenu.vue'
-import cPopular from '../../components/popular/popularSection.vue';
-import cCard from '../../components/popular/popularCard.vue'
-import cLoading from '../../components/loading/loading.vue';
+const store = useStoreDetails();
+const route = useRoute();
+const router = useRouter();
+const loading = ref(true);
 
-import { useStoreDetails } from '../../store/details.ts';
-import { TVDetails } from '../../interfaces/TV/TVDetails.ts';
+const getTitle = (item: any) => item.title ?? item.name ?? '';
 
-export default {
-  components : {
-    cHeader,
-    cRating,
-    cDetailsMenu,
-    cCard,
-    cPopular,
-    cLoading
-  },
-  data() {
-    return {
-      headliner: null as TVDetails | null,
-      apiKey: import.meta.env.VITE_APP_API_KEY,
-      store: useStoreDetails(),
-      loading: true
-    };
-  },
-  methods: {
-
-    parseRuntime(arg: number){
-      return arg > 60 ? `${Math.floor(arg/60)}ч ${arg - (Math.floor(arg/60) * 60)}м` : '';
-    }
-  },
-  
-  async created() {
-    try {
-      await this.store.getDetails(Number(this.$route.params.id), 'tv');
-      if(Object.keys(this.store.$state.recommendations).length == 0 ||  Number(this.$route.params.id) !==  Number(this.store.credits.id)){
-        await this.store.getRecommendations(Number(this.$route.params.id), 'tv')
-      }
-      if(Object.keys(this.store.$state.credits).length == 0 ||  Number(this.$route.params.id) !==  Number(this.store.credits.id) || this.store.$state.prodCompanies.length == 0){
-        await this.store.getCredits(Number(this.$route.params.id), 'tv').then(() => this.store.getProdCompanies());
-      } 
-    } catch (error) {
-      console.log(error)
-    } finally {
-      this.loading = false;
-    }
-  },
-};
-
+onMounted(async () => {
+  try {
+    const id = Number(route.params.id);
+    await store.getDetails(id, 'tv');
+    await store.getRecommendations(id, 'tv');
+    await store.getCredits(id, 'tv');
+    store.getProdCompanies();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
-<template>
-  <cLoading v-if="loading" />
-  <div v-else>
-    <cHeader v-if="store.$state.details"
-        :headliner="store.$state.details"
-        type="tv"
-      >
-        <cRating :star-rating="Number(store.$state.details.vote_average?.toPrecision(2))" />
-    </cHeader>
-    <cDetailsMenu type="tv" />
-    <RouterView />
-    <cPopular popular-title="Похожие">
-      <cCard v-for="item in store.$state.recommendations.results" 
-        @click="$router.push(`/`).then(() => $router.push(`/tv/${item.id}/overview`))" 
-        :card-rating="Number(item.vote_average.toPrecision(2))"
-        :card-image="(item.poster_path) ? item.poster_path.toString() : '/assets/profile.png'"
-        :card-title="item.title?.toString() || item.name?.toString()" />
-    </cPopular>
-  </div>
 
+<template>
+  <AppLoading v-if="loading" />
+  <div v-else>
+    <Headliner v-if="store.details" :headliner="store.details" type="tv">
+      <Rating :star-rating="Number(store.details.vote_average?.toPrecision(2))" />
+    </Headliner>
+    <DetailsMenu type="tv" />
+    <RouterView />
+    <PopularSection popular-title="Похожие">
+      <PopularCard
+        v-for="item in store.recommendations.results"
+        :key="item.id"
+        :card-rating="Number(item.vote_average.toPrecision(2))"
+        :card-image="item.poster_path ?? ''"
+        :card-title="getTitle(item)"
+        @click="router.push(`/tv/${item.id}/overview`)"
+      />
+    </PopularSection>
+  </div>
 </template>

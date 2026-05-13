@@ -1,35 +1,19 @@
-<script lang="ts">
-
-export default {
-  name: "detailsVideoModal",
-  props: {
-    showModal: {
-      type: Boolean,
-      default: false
-    },
-    videoArrayPos: {
-      type: Number,
-      default: 0
-    }
-  },
-
-};
-
+<script setup lang="ts">
+defineProps<{ showModal: boolean }>();
+defineEmits<{ (e: 'modal-off'): void }>();
 </script>
+
 <template>
-  <div class="fixed w-full h-full flex top-0 right-0" v-if="showModal">
-    <div 
-      class="fixed w-full h-full bg-black top-0 right-0 opacity-80 z-40"
-      @click="$emit('modalOff')" 
-    >
-      
+  <Teleport to="body">
+    <div v-if="showModal" class="fixed inset-0 z-40 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black opacity-85" @click="$emit('modal-off')" />
+      <button
+        class="absolute top-4 right-6 z-50 text-white text-3xl leading-none hover:text-[#2cff8b] transition"
+        @click="$emit('modal-off')"
+      >
+        ✕
+      </button>
+      <slot />
     </div>
-    <slot></slot>
-    <div class="fixed top-2 right-12 bg-white z-50 cursor-pointer">
-      <div
-        @click="$emit('modalOff')" 
-        class="before:content-[''] transition before:hover:border-neutral-200 before:absolute before:-right-10  before:w-6 before:h-6 before:border-neutral-400 before:border-b-2 before:rotate-45 before:z-50 
-            after:content-[''] after:hover:border-neutral-200  after:absolute after:w-6  after:h-6 after:border-neutral-400 after:border-b-2 after:z-50 after:-rotate-45"></div>
-    </div>
-  </div>
+  </Teleport>
 </template>
