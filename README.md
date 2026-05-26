@@ -14,7 +14,7 @@
 * Data provided by [TMDB API](https://www.themoviedb.org/)
 
 ## Support
-* (Only for now) Desktop version 
+* (Only for now) Desktop version , and some changes
 
 ## Build Setup
 
